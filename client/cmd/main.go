@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"time"
-
 	pb "server/api/v1"
 
 	"google.golang.org/grpc"
@@ -26,6 +24,6 @@ func main()  {
 			panic(err)
 		}
 		fmt.Println(msg.Message)
-		time.Sleep(time.Second)
+		break
 	}
 }
