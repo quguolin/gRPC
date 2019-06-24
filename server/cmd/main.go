@@ -8,9 +8,16 @@ import (
 	"time"
 
 	pb "server/api/v1"
+	"server/consul"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
+)
+
+const(
+	Port = 9001
+	Ip = "127.0.0.1"
+	CheckPort = 9002
 )
 
 // Server represents the gRPC server
@@ -24,7 +31,7 @@ func (s *Server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 }
 
 func main() {
-	lis, err := net.Listen("tcp", ":9001")
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d",Port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -44,6 +51,22 @@ func main() {
 	opt = append(opt, config, server.withServerUnaryInterceptor())
 	grpcServer := grpc.NewServer(opt...)
 	pb.RegisterGreeterServer(grpcServer, &Server{})
+	cons := consul.Consul{
+
+	}
+	c := &consul.Config{
+		Name:"test",
+		IP:Ip,
+		Port:Port,
+		Tag:[]string{"hello"},
+		CheckUrl:"/checkout",
+		CheckPort:CheckPort,
+		CheckInter:10,
+		CheckDeReg:10,
+	}
+	if err := cons.Register(c);err != nil{
+		panic(err)
+	}
 	if err := grpcServer.Serve(lis);err !=  nil{
 		panic(err)
 	}
