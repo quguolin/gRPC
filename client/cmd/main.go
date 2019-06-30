@@ -3,13 +3,23 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
+
 	pb "server/api/v1"
+	"server/consule"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/resolver"
+)
+
+const (
+	target = "consul://127.0.0.1:8500/hello"
 )
 
 func main()  {
-	conn, err := grpc.Dial("127.0.0.1:9001",grpc.WithInsecure())
+	resolver.Register(consule.New())
+	ctx, _ := context.WithTimeout(context.Background(),10*time.Second)
+	conn, err := grpc.DialContext(ctx,target, grpc.WithBlock(), grpc.WithInsecure(), grpc.WithBalancerName("round_robin"))
 	if err != nil {
 		panic(err)
 	}
@@ -21,9 +31,11 @@ func main()  {
 			Name:"jack",
 		})
 		if err != nil{
-			panic(err)
+			fmt.Println("service is error",err.Error())
+			time.Sleep(time.Second)
+			continue
 		}
 		fmt.Println(msg.Message)
-		break
+		time.Sleep(time.Second)
 	}
 }

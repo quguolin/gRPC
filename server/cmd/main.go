@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"time"
-
+	"runtime"
 	pb "server/api/v1"
 	"server/consul"
 
@@ -15,7 +14,7 @@ import (
 )
 
 const(
-	Port = 9001
+	Port = 9003
 	Ip = "127.0.0.1"
 	CheckPort = 9002
 )
@@ -41,11 +40,11 @@ func main() {
 	)
 	server = &Server{}
 	config := grpc.KeepaliveParams(keepalive.ServerParameters{
-		MaxConnectionIdle:     time.Duration(10000),
-		MaxConnectionAgeGrace: time.Duration(10000),
-		Time:                  time.Duration(10000),
-		Timeout:               time.Duration(10000),
-		MaxConnectionAge:      time.Duration(10000),
+		//MaxConnectionIdle:     time.Duration(10000),
+		//MaxConnectionAgeGrace: time.Duration(10000),
+		//Time:                  time.Duration(10000),
+		//Timeout:               time.Duration(10000),
+		//MaxConnectionAge:      time.Duration(10000),
 	})
 	server.handlers = append(server.handlers, server.recovery(), server.time())
 	opt = append(opt, config, server.withServerUnaryInterceptor())
@@ -102,7 +101,18 @@ func (s *Server) interceptor(ctx context.Context, req interface{}, info *grpc.Un
 
 func (s *Server) recovery() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-		fmt.Println("recovery")
+		defer func() {
+			if i := recover(); i != nil {
+				size := 1024 * 1024
+				buf := make([]byte, size)
+				rs := runtime.Stack(buf, false)
+				if rs > size {
+					rs = size
+				}
+				buf = buf[:rs]
+				fmt.Println(string(buf))
+			}
+		}()
 		resp, err = handler(ctx, req)
 		return
 	}
