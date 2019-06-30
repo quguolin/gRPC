@@ -51,22 +51,24 @@ func main() {
 	opt = append(opt, config, server.withServerUnaryInterceptor())
 	grpcServer := grpc.NewServer(opt...)
 	pb.RegisterGreeterServer(grpcServer, &Server{})
-	cons := consul.Consul{
+	go func() {
+		cons := consul.Consul{
 
-	}
-	c := &consul.Config{
-		Name:"test",
-		IP:Ip,
-		Port:Port,
-		Tag:[]string{"hello"},
-		CheckUrl:"/checkout",
-		CheckPort:CheckPort,
-		CheckInter:10,
-		CheckDeReg:10,
-	}
-	if err := cons.Register(c);err != nil{
-		panic(err)
-	}
+		}
+		c := &consul.Config{
+			Name:"hello",
+			IP:Ip,
+			Port:Port,
+			Tag:[]string{"hello"},
+			CheckUrl:"/checkout",
+			CheckPort:CheckPort,
+			CheckInter:10,
+			CheckDeReg:10,
+		}
+		if err := cons.Register(c);err != nil{
+			panic(err)
+		}
+	}()
 	if err := grpcServer.Serve(lis);err !=  nil{
 		panic(err)
 	}

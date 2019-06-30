@@ -1,5 +1,7 @@
 # gRPC
 
+## 开启gomod
+export GO111MODULE=on 
 
 ## 生成proto文件
  ```protoc --go_out=plugins=grpc:. *.proto```
@@ -10,3 +12,4 @@
     consul agent -dev
     http://127.0.0.1:8500/ui/dc1/services
 ```
+
