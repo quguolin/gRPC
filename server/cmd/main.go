@@ -6,8 +6,9 @@ import (
 	"log"
 	"net"
 	"runtime"
-	pb "server/api/v1"
-	"server/consul"
+
+	pb "gRPC/server/api/v1"
+	"gRPC/server/consul"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"

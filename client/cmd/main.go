@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	pb "client/api/v1"
-	"client/consule"
+	"gRPC/client/consule"
+	pb "gRPC/server/api/v1"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/resolver"
