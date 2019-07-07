@@ -7,6 +7,7 @@ import (
 	"net"
 	"runtime"
 
+	_ "gRPC/jsonDedeg/coder"
 	pb "gRPC/server/api/v1"
 	"gRPC/server/consul"
 
@@ -27,7 +28,7 @@ type Server struct {
 
 // SayHello generates response to a Ping request
 func (s *Server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	return &pb.HelloReply{Message: "你好！世界！"}, nil
+	return &pb.HelloReply{Message: "你好! "+in.Name}, nil
 }
 
 func main() {
