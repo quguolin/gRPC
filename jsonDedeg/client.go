@@ -55,13 +55,11 @@ func (j JSON) Name() string {
 
 // Marshal is json marshal
 func (j JSON) Marshal(v interface{}) (out []byte, err error) {
-	time.Sleep(time.Second)
 	return v.([]byte), nil
 }
 
 // Unmarshal is json unmarshal
 func (j JSON) Unmarshal(data []byte, v interface{}) (err error) {
-	time.Sleep(time.Second)
 	v.(*Reply).res = data
 	return nil
 }
